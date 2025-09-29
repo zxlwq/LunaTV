@@ -21,7 +21,11 @@ function generateManifest() {
   }
 }
 
-generateManifest();
+if (process.env.DOCKER_ENV === 'true' || process.env.NODE_ENV !== 'production') {
+  generateManifest();
+} else {
+  console.log('Skip generating manifest.json at runtime.');
+}
 
 // 直接在当前进程中启动 standalone Server（`server.js`）
 require('./server.js');
