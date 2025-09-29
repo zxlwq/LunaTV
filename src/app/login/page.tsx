@@ -73,6 +73,7 @@ function LoginPageClient() {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isRegister, setIsRegister] = useState(false);
   const [loading, setLoading] = useState(false);
   const [shouldAskUsername, setShouldAskUsername] = useState(false);
 
@@ -94,20 +95,28 @@ function LoginPageClient() {
 
     try {
       setLoading(true);
-      const res = await fetch('/api/login', {
+      const res = await fetch(isRegister ? '/api/register' : '/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           password,
-          ...(shouldAskUsername ? { username } : {}),
+          ...(shouldAskUsername || isRegister ? { username } : {}),
         }),
       });
 
       if (res.ok) {
-        const redirect = searchParams.get('redirect') || '/';
-        router.replace(redirect);
+        if (isRegister) {
+          // 注册成功后自动切回登录模式
+          setIsRegister(false);
+          setError('注册成功，请登录');
+        } else {
+          const redirect = searchParams.get('redirect') || '/';
+          router.replace(redirect);
+        }
       } else if (res.status === 401) {
         setError('密码错误');
+      } else if (res.status === 409) {
+        setError('用户已存在');
       } else {
         const data = await res.json().catch(() => ({}));
         setError(data.error ?? '服务器错误');
@@ -167,16 +176,50 @@ function LoginPageClient() {
             <p className='text-sm text-red-600 dark:text-red-400'>{error}</p>
           )}
 
-          {/* 登录按钮 */}
-          <button
-            type='submit'
-            disabled={
-              !password || loading || (shouldAskUsername && !username)
-            }
-            className='inline-flex w-full justify-center rounded-lg bg-green-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-green-600 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-50'
-          >
-            {loading ? '登录中...' : '登录'}
-          </button>
+          {/* 登录/注册按钮 */}
+          <div className='flex gap-3'>
+            <button
+              type='submit'
+              disabled={!password || loading || ((shouldAskUsername || isRegister) && !username)}
+              className='inline-flex flex-1 justify-center rounded-lg bg-green-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-green-600 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-50'
+            >
+              {loading ? (isRegister ? '注册中...' : '登录中...') : (isRegister ? '注册' : '登录')}
+            </button>
+            <button
+              type='button'
+              onClick={() => setIsRegister(!isRegister)}
+              className='px-4 py-3 text-sm font-medium rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors'
+            >
+              {isRegister ? '返回登录' : '注册账号'}
+            </button>
+          </div>
+
+          {/* 引导链接 */}
+          <div className='mt-3 text-center text-xs text-gray-500 dark:text-gray-400'>
+            {isRegister ? (
+              <span>
+                已有账号？
+                <button
+                  type='button'
+                  onClick={() => setIsRegister(false)}
+                  className='ml-1 text-green-600 hover:text-green-700 dark:text-green-400 underline'
+                >
+                  去登录
+                </button>
+              </span>
+            ) : (
+              <span>
+                没有账号？
+                <button
+                  type='button'
+                  onClick={() => setIsRegister(true)}
+                  className='ml-1 text-green-600 hover:text-green-700 dark:text-green-400 underline'
+                >
+                  去注册
+                </button>
+              </span>
+            )}
+          </div>
         </form>
       </div>
 
