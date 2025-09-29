@@ -13,7 +13,6 @@ parser.add_argument("--admin", type=str, required=True, help="管理员用户名
 parser.add_argument("--password", type=str, required=True, help="管理员密码（必填）")
 parser.add_argument("--upstash", type=str, required=True, help="Upstash Token（必填）")
 parser.add_argument("--endpoint", type=str, required=True, help="Upstash HTTPS Endpoint（必填）")
-
 args = parser.parse_args()
 
 # ----------------- 工具函数 -----------------
@@ -30,6 +29,7 @@ def generate_random_string(length=2):
 
 # ----------------- 主逻辑 -----------------
 if __name__ == "__main__":
+    # 验证 Token
     token = args.token
     if not token:
         print("Token 不能为空")
@@ -89,15 +89,14 @@ Check out the configuration reference at https://huggingface.co/docs/hub/spaces-
     )
 
     # 上传 Dockerfile
-dockerfile_content = f"""FROM {image}
+    dockerfile_content = f"""FROM {image}
 RUN chmod -R 777 /app/public
 """
-api.upload_file(
-    repo_id=repoid,
-    path_in_repo="Dockerfile",
-    path_or_fileobj=BytesIO(dockerfile_content.encode("utf-8")),
-    repo_type="space",
-)
-
+    api.upload_file(
+        repo_id=repoid,
+        path_in_repo="Dockerfile",
+        path_or_fileobj=BytesIO(dockerfile_content.encode("utf-8")),
+        repo_type="space",
+    )
 
     print(f"Space 创建成功: {repoid}")
