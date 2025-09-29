@@ -176,23 +176,14 @@ function LoginPageClient() {
             <p className='text-sm text-red-600 dark:text-red-400'>{error}</p>
           )}
 
-          {/* 登录/注册按钮 */}
-          <div className='flex gap-3'>
-            <button
-              type='submit'
-              disabled={!password || loading || ((shouldAskUsername || isRegister) && !username)}
-              className='inline-flex flex-1 justify-center rounded-lg bg-green-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-green-600 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-50'
-            >
-              {loading ? (isRegister ? '注册中...' : '登录中...') : (isRegister ? '注册' : '登录')}
-            </button>
-            <button
-              type='button'
-              onClick={() => setIsRegister(!isRegister)}
-              className='px-4 py-3 text-sm font-medium rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors'
-            >
-              {isRegister ? '返回登录' : '注册账号'}
-            </button>
-          </div>
+          {/* 提交按钮（根据模式显示 登录/注册） */}
+          <button
+            type='submit'
+            disabled={!password || loading || ((shouldAskUsername || isRegister) && !username)}
+            className='inline-flex w-full justify-center rounded-lg bg-green-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-green-600 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-50'
+          >
+            {loading ? (isRegister ? '注册中...' : '登录中...') : (isRegister ? '注册' : '登录')}
+          </button>
 
           {/* 引导链接 */}
           <div className='mt-3 text-center text-xs text-gray-500 dark:text-gray-400'>
