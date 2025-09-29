@@ -1,0 +1,57 @@
+name: 使用抱脸SDK创建LunaTV
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      Token:
+        description: '抱脸的Token,需要写权限'
+        required: true
+      image:
+        description: 'docker镜像地址'
+        required: false
+        default: ''
+      admin:
+        description: '管理员用户名'
+        required: true
+      password:
+        description: '管理员密码'
+        required: true
+      upstashtoken:
+        description: 'Upstash Token'
+        required: true
+      upstashendpoint:
+        description: 'Upstash HTTPS'
+        required: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: true
+          fetch-depth: 0 
+          
+      - name: 隐藏输入信息
+        uses: levibostian/action-hide-sensitive-inputs@v1
+      
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip wheel
+          pip install huggingface_hub
+
+      - name: 检查系统依赖
+        run: |
+          python -V
+
+      - name: 运行脚本
+        run: |
+          python lunatv.py \
+            --token="${{ github.event.inputs.token}}" \
+            --image="${{ github.event.inputs.image}}" \
+            --admin="${{ github.event.inputs.admin}}" \
+            --password="${{ github.event.inputs.password}}" \
+            --upstash="${{ github.event.inputs.upstashtoken}}" \
+            --endpoint="${{ github.event.inputs.upstashendpoint}}"
