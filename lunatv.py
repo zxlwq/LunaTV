@@ -89,12 +89,15 @@ Check out the configuration reference at https://huggingface.co/docs/hub/spaces-
     )
 
     # 上传 Dockerfile
-    dockerfile_content = f"FROM {image}"
-    api.upload_file(
-        repo_id=repoid,
-        path_in_repo="Dockerfile",
-        path_or_fileobj=BytesIO(dockerfile_content.encode("utf-8")),
-        repo_type="space",
-    )
+dockerfile_content = f"""FROM {image}
+RUN chmod -R 777 /app/public
+"""
+api.upload_file(
+    repo_id=repoid,
+    path_in_repo="Dockerfile",
+    path_or_fileobj=BytesIO(dockerfile_content.encode("utf-8")),
+    repo_type="space",
+)
+
 
     print(f"Space 创建成功: {repoid}")
