@@ -1,2 +1,48 @@
 .env
 .env*.local
+
+# VCS / Editors
+.git
+.gitignore
+.gitattributes
+.github
+.husky
+.vscode
+.idea
+
+# Node / Next.js
+node_modules
+.pnpm-store
+.pnpm-store/**
+.next
+.next/cache
+out
+dist
+coverage
+
+# Logs
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Tests / stories (若存在)
+cypress
+playwright-report
+test-results
+.storybook
+storybook-static
+
+# Unnecessary assets
+screenshots
+public/screenshot*.png
+
+# Source maps (不需要调试时可忽略)
+*.map
