@@ -8,7 +8,7 @@ from huggingface_hub import HfApi
 # ----------------- 参数解析 -----------------
 parser = argparse.ArgumentParser(description="创建Hugging Face Space")
 parser.add_argument("--token", type=str, required=True, help="Hugging Face Token需要写权限")
-parser.add_argument("--image", help="Docker 镜像地址", default="ghcr.io/zxlwq/lunatv:latest")
+parser.add_argument("--image", type=str, default="", help="Docker 镜像地址")
 parser.add_argument("--admin", type=str, required=True, help="管理员用户名（必填）")
 parser.add_argument("--password", type=str, required=True, help="管理员密码（必填）")
 parser.add_argument("--upstash", type=str, required=True, help="Upstash Token（必填）")
@@ -41,8 +41,9 @@ if __name__ == "__main__":
         print("未获取到用户名信息，程序退出。")
         sys.exit(1)
 
+    # 默认镜像
     userid = user_info.get("name")
-    image = args.image
+    image = args.image or "ghcr.io/zxlwq/lunatv:latest"
     admin = args.admin
     password = args.password
 
